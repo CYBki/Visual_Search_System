@@ -50,22 +50,24 @@ Mermaid **context diagram**:
 ```mermaid
 flowchart LR
   User[User / Web UI] -->|Upload image/crop| API[Search API]
-  subgraph Serving
+  
+  subgraph SERVING [Serving]
     API --> EGS[Embedding Generation Service]
-    EGS --> NN[Nearest Neighbor Service (ANN)]
-    NN --> RERANK[Re‑ranking & Policies]
+    EGS --> NNS[Nearest Neighbor Service ANN]
+    NNS --> RERANK[Re-ranking and Policies]
     RERANK --> API
   end
-
-  subgraph Indexing
+  
+  subgraph INDEXING [Indexing]
     Uploader[Image Uploader] --> OBJ[(Object Storage)]
     OBJ --> IDX[Indexing Service]
-    IDX -->|Embeddings| ANN[ANN Index Store]
+    IDX -->|Embeddings| ANNIDX[ANN Index Store]
     IDX -->|pHash & Meta| PG[(Metadata DB)]
   end
-
+  
   API --> PG
-  ANN <--> NN
+  NNS --> ANNIDX
+  ANNIDX --> NNS
   PG --> OBS[Observability: Metrics/Logs]
   API --> OBS
 ```
